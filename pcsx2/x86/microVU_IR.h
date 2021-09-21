@@ -281,6 +281,7 @@ public:
 		reset();
 	}
 
+	u32 supercount = 0;
 	// Fully resets the regalloc by clearing all cached data
 	void reset()
 	{
@@ -289,6 +290,7 @@ public:
 			clearReg(i);
 		}
 		counter = 0;
+		supercount = 0;
 	}
 
 	void reserveCOP2(u16 regs)
@@ -311,8 +313,13 @@ public:
 	// Flushes all allocated registers (i.e. writes-back to memory all modified registers).
 	// If clearState is 0, then it keeps cached reg data valid
 	// If clearState is 1, then it invalidates all cached reg data after write-back
+	u32 countUsed()
+	{
+		return supercount;
+	}
 	void flushAll(bool clearState = true)
 	{
+		supercount = 0;
 		for (int i = 0; i < xmmTotal; i++)
 		{
 			writeBackReg(xmm(i));
@@ -478,6 +485,7 @@ public:
 	{
 		//DevCon.WriteLn("vfLoadReg = %02d, vfWriteReg = %02d, xyzw = %x, clone = %d",vfLoadReg,vfWriteReg,xyzw,(int)cloneWrite);
 		counter++;
+		supercount++;
 		if (vfLoadReg >= 0) // Search For Cached Regs
 		{
 			for (int i = 0; i < xmmTotal; i++)

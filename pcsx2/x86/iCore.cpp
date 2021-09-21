@@ -811,10 +811,14 @@ u16 _freeXMMregsCOP2(int requiredcount)
 				maxcount = xmmregs[i].counter;
 			}
 		}
-
-		_freeXMMreg(regtoclear);
-		count--;
-		regs |= (1 << regtoclear);
+		if (regtoclear != -1)
+		{
+			_freeXMMreg(regtoclear);
+			count--;
+			regs |= (1 << regtoclear);
+		}
+		else
+			DevCon.Warning("No reg to clear???!");
 	}
 
 	pxAssert(count <= 0);
